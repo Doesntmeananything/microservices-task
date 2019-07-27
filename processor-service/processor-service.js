@@ -1,5 +1,6 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(process.cwd(), "../.env") });
+const { saveToDb } = require("./db");
 
 const amqp = require("amqplib");
 
@@ -47,12 +48,11 @@ function consume({ connection, channel, resultsChannel }) {
       // parse message
       let msgBody = msg.content.toString();
       let data = JSON.parse(msgBody);
-      let requestId = data.requestId;
-      let requestData = data.requestData;
-      console.log("Received a request message, requestId:", requestId);
+      let { requestData, requestId, from } = data;
+      console.log("Received a request message: ", requestId, requestData, from);
 
       // process data
-      let processingResults = await processMessage(requestData);
+      let processingResults = await processMessage(requestData, from);
 
       // publish results to channel
       await publishToChannel(resultsChannel, {
@@ -78,13 +78,9 @@ function consume({ connection, channel, resultsChannel }) {
   });
 }
 
-// simulate data processing that takes 5 seconds
-function processMessage(requestData) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(requestData + "-processed");
-    }, 2000);
-  });
+// simulate data processing that takes 2 seconds
+function processMessage(requestData, from) {
+  return saveToDb(requestData, from);
 }
 
 listenForMessages();

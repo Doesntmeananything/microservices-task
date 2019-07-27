@@ -39,7 +39,7 @@ app.get("/api/top5", async function(req, res) {
   res.send({ requestId });
 });
 
-app.post("/api/author", async function(req, res) {
+app.post("/author", async function(req, res) {
   // save request id and increment
   let requestId = lastRequestId;
   lastRequestId++;
@@ -49,19 +49,20 @@ app.post("/api/author", async function(req, res) {
   let channel = await connection.createConfirmChannel();
 
   // publish the data to Rabbit MQ
-  let requestData = req.body.data;
+  let requestData = req.body;
+  const from = req.path;
   console.log("Published a request message, requestId:", requestId);
   await publishToChannel(channel, {
     routingKey: "request",
     exchangeName: "processing",
-    data: { requestId, requestData }
+    data: { requestId, requestData, from }
   });
 
   // send the request id in the response
   res.send({ requestId });
 });
 
-app.post("/api/book", async function(req, res) {
+app.post("/book", async function(req, res) {
   // save request id and increment
   let requestId = lastRequestId;
   lastRequestId++;
@@ -71,12 +72,13 @@ app.post("/api/book", async function(req, res) {
   let channel = await connection.createConfirmChannel();
 
   // publish the data to Rabbit MQ
-  let requestData = req.body.data;
+  let requestData = req.body;
+  const from = req.path;
   console.log("Published a request message, requestId:", requestId);
   await publishToChannel(channel, {
     routingKey: "request",
     exchangeName: "processing",
-    data: { requestId, requestData }
+    data: { requestId, requestData, from }
   });
 
   // send the request id in the response
