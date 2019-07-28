@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 const messageQueueConnectionString = process.env.CLOUDAMQP_URL;
 
 app.get("/top5", async function(req, res) {
-  const data = await fetch("0.0.0.0/top");
+  const data = await fetch("0.0.0.0/cache/top5");
   const result = await data.json();
   res.send(result.data);
 });
@@ -125,7 +125,7 @@ function consume({ connection, channel, resultsChannel }) {
 
 const PORT = process.env.PORT || 5000;
 server = http.createServer(app);
-server.listen(PORT, "localhost", function(err) {
+server.listen(PORT, "0.0.0.0", function(err) {
   if (err) {
     console.error(err);
   } else {
