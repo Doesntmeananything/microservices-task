@@ -46,10 +46,10 @@ app.get("/cache/top5", (req, res) => {
 const port = process.env.CACHE_SERVICE_PORT || 3000;
 
 server = http.createServer(app);
-server.listen(PORT, "0.0.0.0", function(err) {
+server.listen(port, "0.0.0.0", function(err) {
   if (err) {
     console.error(err);
   } else {
-    console.info("Web-service listening on port %s.", PORT);
+    console.info("Web-service listening on port %s.", port);
   }
 });
