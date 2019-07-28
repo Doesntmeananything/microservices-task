@@ -17,8 +17,8 @@ const authorsRedisKey = "authors";
 setInterval(() => {
   fetchTopAuthors()
     .then(authors => {
-      // Save the  API response in Redis store,  data expire time in 3600 seconds, it means one hour
-      client.setex(authorsRedisKey, 30, JSON.stringify(authors));
+      // Save the API response in Redis store with an expiry date of 60 seconds
+      client.setex(authorsRedisKey, 60, JSON.stringify(authors));
     })
     .catch(error => {
       console.log(error);
@@ -33,7 +33,7 @@ app.get("/top", (req, res) => {
     if (authors) {
       return res.json({ source: "cache", data: JSON.parse(authors) });
     } else {
-      // Key does not exist in Redis store
+      // Return an empty array
       return res.json({ source: "cache", data: [] });
     }
   });
