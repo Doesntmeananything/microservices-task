@@ -1,5 +1,5 @@
 {
-  "name": "async-microservices-demo",
+  "name": "create-microservices-task",
   "dependencies": {
     "amqplib": "^0.5.3",
     "body-parser": "^1.18.3",
@@ -15,5 +15,8 @@
   },
   "scripts": {
     "build": "concurrently \"node processor-service/processor-service.js\" \"node web-service/web-service.js\" \"node cache-service/server.js\""
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
