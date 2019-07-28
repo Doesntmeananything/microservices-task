@@ -28,7 +28,7 @@ setInterval(() => {
     });
 }, 60 * 1000);
 
-app.get("/cache/top5", (req, res) => {
+app.get("/", (req, res) => {
   // Try fetching the result from Redis first in case we have it cached
   return client.get(authorsRedisKey, (err, authors) => {
     if (authors) {
@@ -50,6 +50,6 @@ server.listen(port, "0.0.0.0", function(err) {
   if (err) {
     console.error(err);
   } else {
-    console.info("Web-service listening on port %s.", port);
+    console.info("Cache-service listening on port %s.", port);
   }
 });
