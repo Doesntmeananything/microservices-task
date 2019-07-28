@@ -10,7 +10,6 @@ client.on("error", err => {
   console.log("Error " + err);
 });
 
-// key to store results in Redis store
 const authorsRedisKey = "authors";
 
 // Fetch directly from remote api once a minute

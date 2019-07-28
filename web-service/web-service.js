@@ -3,6 +3,7 @@ const fetch = require("node-fetch");
 require("dotenv").config({ path: path.resolve(process.cwd(), "../.env") });
 
 const express = require("express");
+const { check, validationResult } = require("express-validator");
 const app = express();
 const http = require("http");
 const bodyParser = require("body-parser");
@@ -20,6 +21,11 @@ app.get("/top5", async function(req, res) {
 
 // Helper function to push posted data through Rabbit MQ channel to db
 async function pushToDb(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   let connection = await amqp.connect(messageQueueConnectionString);
   let channel = await connection.createConfirmChannel();
 
@@ -38,9 +44,28 @@ async function pushToDb(req, res) {
   res.send(`Published to ${from.slice(1)}s: ${JSON.stringify(requestData)}`);
 }
 
-app.post("/author", pushToDb);
+app.post(
+  "/author",
+  [
+    check("name")
+      .isAlpha("ru-RU")
+      .isAlpha("en-US"),
+    check("age").isInt({ min: 10, max: 120 })
+  ],
+  pushToDb
+);
 
-app.post("/book", pushToDb);
+app.post(
+  "/book",
+  [
+    check("authorId").isUUID(4),
+    check("title")
+      .isAlpha("ru-RU")
+      .isAlpha("en-US"),
+    check("pages").isInt()
+  ],
+  pushToDb
+);
 
 // utility function to publish messages to a channel
 function publishToChannel(channel, { routingKey, exchangeName, data }) {
