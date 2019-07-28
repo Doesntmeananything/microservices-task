@@ -1,28 +1,17 @@
 # Asynchronous Microservices with RabbitMQ and Node.js
 
-## Setup
-After Provisioning RabbitMQ, run
-````
-npm install
-node rabbit_mq_setup.js
-cd web-service
-node web-service.js
-// in a different terminal
-cd processor-service 
-node processor-service.js
-````
+This repo contains two microservices that perform database negotation and expose public API. The caching microservice related to them (can be found here)[https://github.com/Doesntmeananything/cache-service].
 
-In a third terminal, send a request to test the processing:
-````
-curl --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"data":"my-data"}' \
-  http://localhost:3000/api/v1/processData
-````
+## Description
 
-You should see the results in the web service terminal after a few seconds:
-````
-Results saved
-requestId: x , resultsData: my-data-processed
+- `web-service` acts as an entry point and serves an API that accepts HTTP requests
+- `processor-service` receives requests through RabbitMQ channels and queries them against the Postgres database, updating it when needed
+- microservices are managed by PM2, clustering and restarting them when required.
 
-````
+## Endpoints
+
+| Verb |                       Url                       |                   Schema                    |                                          Result                                           |
+| :--: | :---------------------------------------------: | :-----------------------------------------: | :---------------------------------------------------------------------------------------: |
+| GET  |  https://microservices-task.herokuapp.com/top5  |                      -                      | Returns a cached array of most productive authors (number of books that have pages > 200) |
+| POST | https://microservices-task.herokuapp.com/author |          {name: String, age: Int}           |      Adds given author to the database and returns the log of the database operation      |
+| POST |  https://microservices-task.herokuapp.com/book  | {authorId: UUID, title: String, pages: Int} |       Adds given book to the database and returns the log of the database operation       |
