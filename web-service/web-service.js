@@ -123,7 +123,7 @@ function consume({ connection, channel, resultsChannel }) {
   });
 }
 
-const PORT = process.env.WEB_SERVICE_PORT || 5000;
+const PORT = process.env.PORT || 5000;
 server = http.createServer(app);
 server.listen(PORT, "localhost", function(err) {
   if (err) {
