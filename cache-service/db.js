@@ -8,11 +8,11 @@ pg.defaults.ssl = true;
 
 const sequelize = new Sequelize(process.env.DB_URL);
 
-sequelize
-  .query(
-    "SELECT  author.name, COUNT(*) PageCount FROM authors AS au INNER JOIN books ON  books.authorId = author.id WHERE  books.pages > 200 GROUP BY author.name ORDER BY PageCount DESC",
+function fetchTopAuthors() {
+  return sequelize.query(
+    'SELECT  au.name, COUNT(*) BookCount FROM authors AS au INNER JOIN books ON  "books"."authorId" = au.id WHERE  books.pages > 200 GROUP BY au.name ORDER BY BookCount DESC LIMIT 5',
     { type: sequelize.QueryTypes.SELECT }
-  )
-  .then(authors => {
-    console.log(authors);
-  });
+  );
+}
+
+module.exports = { fetchTopAuthors };
