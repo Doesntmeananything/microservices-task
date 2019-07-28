@@ -117,7 +117,6 @@ async function listenForResults() {
 function consume({ connection, channel, resultsChannel }) {
   return new Promise((resolve, reject) => {
     channel.consume("processing.results", async function(msg) {
-      // parse message
       let msgBody = msg.content.toString();
       let data = JSON.parse(msgBody);
       let processingResults = data.processingResults;
