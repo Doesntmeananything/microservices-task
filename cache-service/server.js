@@ -28,7 +28,7 @@ setInterval(() => {
     });
 }, 60 * 1000);
 
-app.get("/", (req, res) => {
+app.get("/cache/top5", (req, res) => {
   // Try fetching the result from Redis first in case we have it cached
   return client.get(authorsRedisKey, (err, authors) => {
     if (authors) {
