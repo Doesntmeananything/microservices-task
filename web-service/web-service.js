@@ -129,7 +129,7 @@ server.listen(PORT, "localhost", function(err) {
   if (err) {
     console.error(err);
   } else {
-    console.info("Listening on port %s.", PORT);
+    console.info("Web-service listening on port %s.", PORT);
   }
 });
 
