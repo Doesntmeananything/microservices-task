@@ -23,6 +23,16 @@ app.get("/top5", async function(req, res) {
   res.send(result.data);
 });
 
+app.get("/authors", async function(req, res) {
+  const cacheServiceUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://caching-service-task.herokuapp.com/"
+      : "http://localhost/";
+  const data = await fetch(`${cacheServiceUrl}cache/authors`);
+  const result = await data.json();
+  res.send(result.data);
+});
+
 // Helper function to push posted data through Rabbit MQ channel to db
 async function pushToDb(req, res) {
   const errors = validationResult(req);
