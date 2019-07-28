@@ -1,8 +1,7 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(process.cwd(), "../../.env") });
 const sequelize = require("./sequelize");
-const Author = require("./Author");
-const Book = require("./Book");
+const { Author, Book } = require("./models");
 
 const models = {
   "/author": Author,

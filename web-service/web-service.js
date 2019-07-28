@@ -1,4 +1,5 @@
 const path = require("path");
+const fetch = require("node-fetch");
 require("dotenv").config({ path: path.resolve(process.cwd(), "../.env") });
 
 const express = require("express");
@@ -10,40 +11,17 @@ const amqp = require("amqplib");
 // Middleware
 app.use(bodyParser.json());
 
-// simulate request ids
-let lastRequestId = 1;
-
 // RabbitMQ connection string
 const messageQueueConnectionString = process.env.CLOUDAMQP_URL;
 
 // handle the requests
-app.get("/api/top5", async function(req, res) {
-  // save request id and increment
-  let requestId = lastRequestId;
-  lastRequestId++;
-
-  // connect to Rabbit MQ and create a channel
-  let connection = await amqp.connect(messageQueueConnectionString);
-  let channel = await connection.createConfirmChannel();
-
-  // publish the data to Rabbit MQ
-  let requestData = req.body.data;
-  console.log("Published a request message, requestId:", requestId);
-  await publishToChannel(channel, {
-    routingKey: "request",
-    exchangeName: "processing",
-    data: { requestId, requestData }
-  });
-
-  // send the request id in the response
-  res.send({ requestId });
+app.get("/top5", async function(req, res) {
+  const data = await fetch("http://localhost:3000/top");
+  const result = await data.json();
+  res.send(result.data);
 });
 
 app.post("/author", async function(req, res) {
-  // save request id and increment
-  let requestId = lastRequestId;
-  lastRequestId++;
-
   // connect to Rabbit MQ and create a channel
   let connection = await amqp.connect(messageQueueConnectionString);
   let channel = await connection.createConfirmChannel();
@@ -51,15 +29,15 @@ app.post("/author", async function(req, res) {
   // publish the data to Rabbit MQ
   let requestData = req.body;
   const from = req.path;
-  console.log("Published a request message, requestId:", requestId);
+  console.log(`Published a request message from ${from}: ${requestData}`);
   await publishToChannel(channel, {
     routingKey: "request",
     exchangeName: "processing",
-    data: { requestId, requestData, from }
+    data: { requestData, from }
   });
 
   // send the request id in the response
-  res.send({ requestId });
+  res.send(`Published to ${from.slice(1)}s: ${JSON.stringify(requestData)}`);
 });
 
 app.post("/book", async function(req, res) {
