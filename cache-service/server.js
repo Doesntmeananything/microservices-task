@@ -1,10 +1,12 @@
 const express = require("express");
 const redis = require("redis");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(process.cwd(), "../.env") });
 const { fetchTopAuthors } = require("./db");
 
 const app = express();
 
-const client = redis.createClient(6379);
+const client = redis.createClient(process.env.REDIS_URL);
 
 client.on("error", err => {
   console.log("Error " + err);
