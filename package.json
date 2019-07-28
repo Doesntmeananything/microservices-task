@@ -12,5 +12,8 @@
     "pg-hstore": "^2.3.3",
     "redis": "^2.8.0",
     "sequelize": "^5.11.0"
+  },
+  "scripts": {
+    "build": "concurrently \"node processor-service/processor-service.js\" \"node web-service/web-service.js\" \"node cache-service/server.js\""
   }
 }
