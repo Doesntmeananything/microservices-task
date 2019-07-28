@@ -4,11 +4,9 @@ const { saveToDb } = require("./db");
 
 const amqp = require("amqplib");
 
-// RabbitMQ connection string
 const messageQueueConnectionString = process.env.CLOUDAMQP_URL;
 
 async function listenForMessages() {
-  // connect to Rabbit MQ
   let connection = await amqp.connect(messageQueueConnectionString);
 
   // create a channel and prefetch 1 message at a time
@@ -48,8 +46,8 @@ function consume({ connection, channel, resultsChannel }) {
       // parse message
       let msgBody = msg.content.toString();
       let data = JSON.parse(msgBody);
-      let { requestData, requestId, from } = data;
-      console.log("Received a request message: ", requestId, requestData, from);
+      let { requestData, from } = data;
+      console.log("Received a request message: ", requestData, from);
 
       // process data
       let processingResults = await processMessage(requestData, from);
@@ -58,9 +56,9 @@ function consume({ connection, channel, resultsChannel }) {
       await publishToChannel(resultsChannel, {
         exchangeName: "processing",
         routingKey: "result",
-        data: { requestId, processingResults }
+        data: { processingResults }
       });
-      console.log("Published results for requestId:", requestId);
+      console.log("Published results for ", from, requestData);
 
       // acknowledge message as processed successfully
       await channel.ack(msg);

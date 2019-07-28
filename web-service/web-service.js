@@ -8,60 +8,39 @@ const http = require("http");
 const bodyParser = require("body-parser");
 const amqp = require("amqplib");
 
-// Middleware
 app.use(bodyParser.json());
 
-// RabbitMQ connection string
 const messageQueueConnectionString = process.env.CLOUDAMQP_URL;
 
-// handle the requests
 app.get("/top5", async function(req, res) {
   const data = await fetch("http://localhost:3000/top");
   const result = await data.json();
   res.send(result.data);
 });
 
-app.post("/author", async function(req, res) {
-  // connect to Rabbit MQ and create a channel
+// Helper function to push posted data through Rabbit MQ channel to db
+async function pushToDb(req, res) {
   let connection = await amqp.connect(messageQueueConnectionString);
   let channel = await connection.createConfirmChannel();
 
   // publish the data to Rabbit MQ
   let requestData = req.body;
   const from = req.path;
-  console.log(`Published a request message from ${from}: ${requestData}`);
+  console.log(
+    `Published a request message from ${from}: ${JSON.stringify(requestData)}`
+  );
   await publishToChannel(channel, {
     routingKey: "request",
     exchangeName: "processing",
     data: { requestData, from }
   });
 
-  // send the request id in the response
   res.send(`Published to ${from.slice(1)}s: ${JSON.stringify(requestData)}`);
-});
+}
 
-app.post("/book", async function(req, res) {
-  // save request id and increment
-  let requestId = lastRequestId;
-  lastRequestId++;
+app.post("/author", pushToDb);
 
-  // connect to Rabbit MQ and create a channel
-  let connection = await amqp.connect(messageQueueConnectionString);
-  let channel = await connection.createConfirmChannel();
-
-  // publish the data to Rabbit MQ
-  let requestData = req.body;
-  const from = req.path;
-  console.log("Published a request message, requestId:", requestId);
-  await publishToChannel(channel, {
-    routingKey: "request",
-    exchangeName: "processing",
-    data: { requestId, requestData, from }
-  });
-
-  // send the request id in the response
-  res.send({ requestId });
-});
+app.post("/book", pushToDb);
 
 // utility function to publish messages to a channel
 function publishToChannel(channel, { routingKey, exchangeName, data }) {
@@ -83,7 +62,6 @@ function publishToChannel(channel, { routingKey, exchangeName, data }) {
 }
 
 async function listenForResults() {
-  // connect to Rabbit MQ
   let connection = await amqp.connect(messageQueueConnectionString);
 
   // create a channel and prefetch 1 message at a time
@@ -101,32 +79,23 @@ function consume({ connection, channel, resultsChannel }) {
       // parse message
       let msgBody = msg.content.toString();
       let data = JSON.parse(msgBody);
-      let requestId = data.requestId;
       let processingResults = data.processingResults;
-      console.log(
-        "Received a result message, requestId:",
-        requestId,
-        "processingResults:",
-        processingResults
-      );
+      console.log("processingResults:", processingResults);
 
       // acknowledge message as received
       await channel.ack(msg);
     });
 
-    // handle connection closed
     connection.on("close", err => {
       return reject(err);
     });
 
-    // handle errors
     connection.on("error", err => {
       return reject(err);
     });
   });
 }
 
-// Start the server
 const PORT = 80;
 server = http.createServer(app);
 server.listen(PORT, "localhost", function(err) {
