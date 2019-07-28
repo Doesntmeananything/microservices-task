@@ -1,5 +1,6 @@
 const express = require("express");
 const redis = require("redis");
+const http = require("http");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(process.cwd(), "../.env") });
 const { fetchTopAuthors } = require("./db");
@@ -38,10 +39,17 @@ app.get("/cache/top5", (req, res) => {
   });
 });
 
-const PORT = process.env.CACHE_SERVICE_PORT || 3000;
-
 // app.listen(PORT, "0.0.0.0", () =>
 //   console.log("Caching server listening on port: ", PORT)
 // );
 
-app.listen(PORT, () => console.log("Caching server listening on port: ", PORT));
+const port = process.env.CACHE_SERVICE_PORT || 3000;
+
+server = http.createServer(app);
+server.listen(PORT, "0.0.0.0", function(err) {
+  if (err) {
+    console.error(err);
+  } else {
+    console.info("Web-service listening on port %s.", PORT);
+  }
+});
