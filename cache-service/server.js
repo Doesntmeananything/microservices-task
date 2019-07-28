@@ -38,6 +38,6 @@ app.get("/cache/top5", (req, res) => {
   });
 });
 
-const PORT = process.env.CACHE_SERVICE_PORT;
+const PORT = process.env.CACHE_SERVICE_PORT || 3000;
 
 app.listen(PORT, () => console.log("Server listening on port: ", PORT));
