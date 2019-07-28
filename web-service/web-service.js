@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 const messageQueueConnectionString = process.env.CLOUDAMQP_URL;
 
 app.get("/top5", async function(req, res) {
-  const data = await fetch("http://localhost:3000/top");
+  const data = await fetch("0.0.0.0/top");
   const result = await data.json();
   res.send(result.data);
 });
