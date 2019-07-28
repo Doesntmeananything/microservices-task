@@ -16,7 +16,7 @@ const messageQueueConnectionString = process.env.CLOUDAMQP_URL;
 app.get("/top5", async function(req, res) {
   const cacheServiceUrl =
     process.env.NODE_ENV === "production"
-      ? "https://microservices-task.herokuapp.com/"
+      ? "https://caching-service-task.herokuapp.com/"
       : "http://localhost/";
   const data = await fetch(`${cacheServiceUrl}cache/top5`);
   const result = await data.json();
