@@ -16,8 +16,8 @@
     "sequelize": "^5.11.0"
   },
   "scripts": {
-    "pm2": "pm2-runtime start ecosystem.config.js --env production",
-    "start": "concurrently \"forever start web-service/web-service.js\" \"forever start processor-service/processor-service.js\" \"forever start cache-service/server.js\""
+    "build": "pm2-runtime start ecosystem.config.js --env production",
+    "test": "concurrently \"forever start web-service/web-service.js\" \"forever start processor-service/processor-service.js\" \"forever start cache-service/server.js\""
   },
   "engines": {
     "node": "10.x"
