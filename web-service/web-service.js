@@ -48,8 +48,9 @@ app.post(
   "/author",
   [
     check("name")
-      .isAlpha("ru-RU")
-      .isAlpha("en-US"),
+      .not()
+      .isEmpty()
+      .trim(),
     check("age").isInt({ min: 10, max: 120 })
   ],
   pushToDb
@@ -60,8 +61,9 @@ app.post(
   [
     check("authorId").isUUID(4),
     check("title")
-      .isAlpha("ru-RU")
-      .isAlpha("en-US"),
+      .not()
+      .isEmpty()
+      .trim(),
     check("pages").isInt()
   ],
   pushToDb
