@@ -1,4 +1,4 @@
-# Asynchronous Microservices with RabbitMQ and Node.js
+# Asynchronous Microservices with RabbitMQ, Redis, and Node.js
 
 This repo contains two microservices that perform database negotation and expose public API to interact with. The caching microservice related to them [can be found here](https://github.com/Doesntmeananything/cache-service).
 
