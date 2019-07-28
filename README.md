@@ -12,9 +12,9 @@ This repo contains two microservices that perform database negotation and expose
 
 Hosted at https://microservices-task.herokuapp.com
 
-| Verb |   Url    |                   Schema                    |                                                                        Result                                                                         |
-| :--: | :------: | :-----------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: |
-| GET  |  /top5   |                      -                      | Returns a cached array of 5 most productive authors (number of books that have pages > 200). Returns an empty array when no caching is yet performed. |
-| GET  | /authors |                      -                      |                    Returns a cached array of authors and their UUIDs. Can be used to get data needed to add books to the database.                    |
-| POST | /author  |          {name: String, age: Int}           |                                    Adds given author to the database and returns the log of the database operation                                    |
-| POST |  /book   | {authorId: UUID, title: String, pages: Int} |                                     Adds given book to the database and returns the log of the database operation                                     |
+| Method | endpoint |                   Schema                    |                                                                        Result                                                                         |
+| :----: | :------: | :-----------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: |
+|  GET   |  /top5   |                      -                      | Returns a cached array of 5 most productive authors (number of books that have pages > 200). Returns an empty array when no caching is yet performed. |
+|  GET   | /authors |                      -                      |                    Returns a cached array of authors and their UUIDs. Can be used to get data needed to add books to the database.                    |
+|  POST  | /author  |          {name: String, age: Int}           |                                    Adds given author to the database and returns the log of the database operation                                    |
+|  POST  |  /book   | {authorId: UUID, title: String, pages: Int} |                                     Adds given book to the database and returns the log of the database operation                                     |
