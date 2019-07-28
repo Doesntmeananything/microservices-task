@@ -3,9 +3,11 @@
   "dependencies": {
     "amqplib": "^0.5.3",
     "body-parser": "^1.18.3",
+    "concurrently": "^4.1.1",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "express-validator": "^6.1.1",
+    "forever": "^1.0.0",
     "node-fetch": "^2.6.0",
     "pg": "^7.12.0",
     "pg-hstore": "^2.3.3",
@@ -14,7 +16,8 @@
     "sequelize": "^5.11.0"
   },
   "scripts": {
-    "build": "pm2-runtime start ecosystem.config.js --env production"
+    "pm2": "pm2-runtime start ecosystem.config.js --env production",
+    "build": "concurrently \"forever start web-service/web-service.js\" \"forever start processor-service/processor-service.js\" \"forever start cache-service/server.js\""
   },
   "engines": {
     "node": "10.x"
