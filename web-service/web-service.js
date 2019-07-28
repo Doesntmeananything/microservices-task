@@ -14,7 +14,11 @@ app.use(bodyParser.json());
 const messageQueueConnectionString = process.env.CLOUDAMQP_URL;
 
 app.get("/top5", async function(req, res) {
-  const data = await fetch("http:/0.0.0.0/cache/top5");
+  const cacheServiceUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://microservices-task.herokuapp.com/"
+      : "http://localhost/";
+  const data = await fetch(`${cacheServiceUrl}cache/top5`);
   const result = await data.json();
   res.send(result.data);
 });
